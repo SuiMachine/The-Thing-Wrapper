@@ -34,6 +34,8 @@
 
 # Debug build
 Debug/
+dinput8/Debug
+dinput8/Release
 
 # Archives
 *.zip
