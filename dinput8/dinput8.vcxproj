@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cheats.cpp" />
     <ClCompile Include="dinput8.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cheats.h" />
     <ClInclude Include="dinput8.h" />
     <ClInclude Include="hookFunctions.h" />
   </ItemGroup>

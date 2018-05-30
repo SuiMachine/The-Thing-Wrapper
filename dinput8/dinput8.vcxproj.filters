@@ -18,12 +18,18 @@
     <ClCompile Include="dinput8.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cheats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dinput8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hookFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cheats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
