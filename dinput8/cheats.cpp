@@ -23,7 +23,7 @@ void __declspec(naked) enableSaveLoadNaked()
 	__asm
 	{
 		fstp st(0)
-		fild bCEnableDoInGameSaveLoad
+		fild[bCEnableDoInGameSaveLoad]
 		fcomp   ds:0x841780
 		jmp[enableSaveLoadMenuReturn]
 	}
