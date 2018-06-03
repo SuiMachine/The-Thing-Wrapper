@@ -26,10 +26,10 @@
     <ClInclude Include="dinput8.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hookFunctions.h">
+    <ClInclude Include="cheats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cheats.h">
+    <ClInclude Include="hookFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

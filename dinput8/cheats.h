@@ -1,7 +1,6 @@
 #pragma once
 #include "hookFunctions.h"
 
-
 class cheats
 {
 public:

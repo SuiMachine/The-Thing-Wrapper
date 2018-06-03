@@ -2,9 +2,16 @@
 
 #include <dinput.h>
 #include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>  
+#include "cheats.h"
 #include "hookFunctions.h"
+#include "staticMemoryAddressesScan.h"
 #define INITGUID
 #define DIRECTINPUT_VERSION 0x0800
+
 
 class f_iDirectInput8 : public IDirectInput8
 {
@@ -41,4 +48,4 @@ struct dinput8_dll
 
 } dinput8;
 
-bool Hook(DWORD, void *, DWORD *, int);
+float ConvertFOV(float, float);
