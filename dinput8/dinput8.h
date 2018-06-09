@@ -8,7 +8,7 @@
 #include <cmath>  
 #include "cheats.h"
 #include "hookFunctions.h"
-#include "staticMemoryAddressesScan.h"
+#include "WidescreenFixes.h"
 #define INITGUID
 #define DIRECTINPUT_VERSION 0x0800
 
@@ -47,5 +47,3 @@ struct dinput8_dll
 	LPWDllUnregisterServer DllUnregisterServer;
 
 } dinput8;
-
-float ConvertFOV(float, float);
