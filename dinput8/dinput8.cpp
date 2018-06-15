@@ -33,6 +33,17 @@ void __declspec(naked) sizeOverride()
 	}
 }
 
+DWORD sizeOverrideFullscreenLoadReturn;
+void __declspec(naked) sizeOverrideFullscreenLoad()
+{
+	__asm
+	{
+		push DS:[bHeight]
+		push DS:[bWidth]
+		jmp[sizeOverrideFullscreenLoadReturn]
+	}
+}
+
 DWORD fullscreenOverrideReturn;
 void __declspec(naked) fullscreenOverride()
 {
@@ -117,11 +128,12 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 		dinput8.DllUnregisterServer = (LPWDllUnregisterServer)GetProcAddress(dinput8.dll, "DllUnregisterServer");
 
 		//Get base module
-		baseModule = GetModuleHandleA("TheThing.exe");
+		baseModule = GetModuleHandle(NULL);
 		UnprotectModule(baseModule);
 
 		//Size override detour
 		Hook((DWORD)baseModule + 0xB1AA, sizeOverride, &sizeOverrideReturn, 0x6);
+		Hook((DWORD)baseModule + 0x35506F, sizeOverrideFullscreenLoad, &sizeOverrideFullscreenLoadReturn, 0x22);
 
 		//Fullscreen, Borderless and Position
 		Hook((DWORD)baseModule + 0x357D20, fullscreenOverride, &fullscreenOverrideReturn, 0x6);

@@ -73,7 +73,7 @@ WidescreenFixes::WidescreenFixes(HMODULE moduleReference, int Width, int Height)
 	StretchedAspectWidth = (int)(Height * (4.0f / 3.0f));
 	StretchedAspectTop = 0;
 	StretchedAspectLeft = (int)((Width / 2.0f)-(StretchedAspectWidth/2.0f));
-	//Hook((DWORD)(this->baseModuleRef) + 0x3B20C9, cinematicsRectangleOverride, &cinematicsRectangleOverrideReturn, 0x11);
+	Hook((DWORD)(this->baseModuleRef) + 0x3B20C9, cinematicsRectangleOverride, &cinematicsRectangleOverrideReturn, 0x11);
 
 	CorrectCameraAspectRatio(this->AspectRatio);
 
