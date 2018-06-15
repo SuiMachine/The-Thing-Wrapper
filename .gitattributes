@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+*.c diff=astextplain merge text
+*.cpp diff=astextplain merge text
+*.h diff=astextplain merge text
+*.hpp diff=astextplain merge text
