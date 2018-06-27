@@ -7,6 +7,7 @@ int StretchedAspectTop = 0;
 int StretchedAspectLeft= 0;
 int StretchedAspectWidth = 1024;
 int StretchedAspectHeight = 768;
+float divChange = 1;
 
 DWORD cinematicsRectangleOverrideReturn;
 void __declspec(naked) cinematicsRectangleOverride()
@@ -27,7 +28,42 @@ void __declspec(naked) cinematicsRectangleOverride()
 	}
 }
 
-std::string fileExceptionsForaspectCorrectionUI2DDraw[] = { "eff_cctvdarkband", "eff_cctvnoise", "eff_cctvstatic" };
+std::set<std::string> *avoidThis = new std::set<std::string>();
+std::string filesExcludedFromAspectCorrection[] = { "eff_cctvdarkband", "eff_cctvnoise", "eff_cctvstatic", "gui_cells", "gui_scrollbarkit", "gui_ringframekit", "gui_outerbar", "eff_cctvreclight",
+	"gui_mousepointer",
+	"gui_qepricaption",
+	"gui_qepriicon",
+	"gui_qeseccaption",
+	"gui_qesecicon",
+	"gui_pccontrolcombo",
+	"gui_flare",
+	"gui_machinegun",
+	"gui_adrenaline",
+	"gui_bloodtest",
+	"gui_c4",
+	"gui_compactflamer",
+	"gui_compactflamer",
+	"gui_fireextinguisher",
+	"gui_flamegrenade",
+	"gui_flamethrower",
+	"gui_flamethrowerammo",
+	"gui_flare",
+	"gui_grenadelauncher",
+	"gui_hegrenade",
+	"gui_machinegunammo",
+	"gui_medipak",
+	"gui_pistol",
+	"gui_pistolammo",
+	"gui_reggrenade",
+	"gui_shotgun",
+	"gui_shotgunammo",
+	"gui_sniperrifle",
+	"gui_sniperrifleammo",
+	"gui_stungrenade",
+	"gui_taser",
+	"gui_torch"
+};
+
 void __fastcall aspectCorrectionUI2DDraw(float *ecx0, int *edx0, signed int a1, signed int a2, signed int a3, signed int a4, char * a5, int a6, int a7)
 {
 	float *v9 = ecx0;
@@ -37,21 +73,23 @@ void __fastcall aspectCorrectionUI2DDraw(float *ecx0, int *edx0, signed int a1, 
 	float fRightEdgePrecent = 0;
 	float fTopEdgePrecent = 0;
 
-	//_DWORD *__thiscall sub_7505E0(_DWORD *this)
-	//typedef DWORD*(*probablyInitilizerForCoordinates)(float*);
-	//((probablyInitilizerForCoordinates)0x7505E0)(&fLeftEdgePrecent);
-
 	fLeftEdgePrecent = (float)((double)a1 * 0.003125 - 1.0);
 	fRightEdgePrecent = (float)((double)a3 * 0.003125 - 1.0);
 	fBottomEdgePrecent = (float)((double)a2 * 0.0041666669 - 1.0);
 	fTopEdgePrecent = (float)((double)a4 * 0.0041666669 - 1.0);
 
-	if (std::find(std::begin(fileExceptionsForaspectCorrectionUI2DDraw), std::end(fileExceptionsForaspectCorrectionUI2DDraw), a5) == std::end(fileExceptionsForaspectCorrectionUI2DDraw))
+	if (std::find(std::begin(filesExcludedFromAspectCorrection), std::end(filesExcludedFromAspectCorrection), a5) == std::end(filesExcludedFromAspectCorrection))
 	{
-		//fLeftEdgePrecent = fLeftEdgePrecent / divChange;
-		//fRightEdgePrecent = fRightEdgePrecent / divChange;
-		//fBottomEdgePrecent = fBottomEdgePrecent / divChange;
-		//fTopEdgePrecent = fTopEdgePrecent / divChange;
+		fLeftEdgePrecent = fLeftEdgePrecent / divChange;
+		fRightEdgePrecent = fRightEdgePrecent / divChange;
+
+#if _DEBUG
+		std::string halo = a5;
+		if (halo != "" && avoidThis->find(halo) == avoidThis->end())
+		{
+			avoidThis->insert(halo);
+		}
+#endif
 	}
 
 	//int __fastcall blind_Draw2DElement(float *unknownPointerPRollyStruct, int *unknownPointer, float leftEdgePrecent, float bottomEdgePrecent, float rightEdgePrecent, float topEdgePrecent, int a7, int a8, int a9)
@@ -67,7 +105,7 @@ WidescreenFixes::WidescreenFixes(HMODULE moduleReference, int Width, int Height)
 	this->Width = Width;
 	this->Height = Height;
 	this->AspectRatio = Width * 1.0f / Height;
-	this->divChange = this->AspectRatio / (4.0f / 3.0f);
+	divChange = this->AspectRatio / (4.0f / 3.0f);
 
 	StretchedAspectHeight = Height;
 	StretchedAspectWidth = (int)(Height * (4.0f / 3.0f));
@@ -76,16 +114,6 @@ WidescreenFixes::WidescreenFixes(HMODULE moduleReference, int Width, int Height)
 	Hook((DWORD)(this->baseModuleRef) + 0x3B20C9, cinematicsRectangleOverride, &cinematicsRectangleOverrideReturn, 0x11);
 
 	CorrectCameraAspectRatio(this->AspectRatio);
-
-
-	//Crosshair
-	/*
-	{
-	float leftEdge = *(float*)((DWORD)baseModule + 0x97CF6) / divChange;
-	float rightEdge = *(float*)((DWORD)baseModule + 0x97D06) / divChange;
-	*(float*)((DWORD)baseModule + 0x97CF6) = leftEdge;
-	*(float*)((DWORD)baseModule + 0x97D06) = rightEdge;
-	}*/
 }
 
 //Function used to override FOV
@@ -105,15 +133,14 @@ void WidescreenFixes::CorrectCameraAspectRatio(float aspect)
 	*(float*)((DWORD)(this->baseModuleRef) + 0x4579AC) = aspect; //Modify camera aspect ratio
 }
 
-//Function used for testing stuff
-void WidescreenFixes::TestingStuff()
+void WidescreenFixes::CorrectCrosshair()
 {
-	Hook((DWORD)(this->baseModuleRef) + 0x36E390, aspectCorrectionUI2DDraw, 0x9F);
 
-	//*(float*)((DWORD)baseModule + 0x83229)  = 2;//1.3962635; //CombatCameraFOV
-	//*(float*)((DWORD)baseModule + 0x29BCC8) = 100;//60; //TorchFOV (Flashlight FOV)
-	//*(float*)((DWORD)baseModule + 0x29B8CD) = 100;//50 //TorchFOV1
-	//*(float*)((DWORD)baseModule + 0x29B501) = 100;//50 //TorchFOV2
+	float leftEdge = *(float*)((DWORD)this->baseModuleRef + 0x97CF6) / divChange;
+	float rightEdge = *(float*)((DWORD)this->baseModuleRef + 0x97D06) / divChange;
+	*(float*)((DWORD)this->baseModuleRef + 0x97CF6) = leftEdge;
+	*(float*)((DWORD)this->baseModuleRef + 0x97D06) = rightEdge;
+
 }
 
 //function to calculate hor+ FOV
@@ -122,4 +149,15 @@ float WidescreenFixes::ConvertFOV(float DesiredFOVInDegrees, float AspectRatio)
 	double horRadian = M_PI * DesiredFOVInDegrees / 180;
 	double verRadian = 2 * atan(tan(horRadian / 2) * (3.0 / 4.0));
 	return (float)(2 * atan(tan(verRadian / 2) * AspectRatio)); //2 * Math.Atan(Math.Tan(VerticalRadians / 2) * (ResWidth * 1.0 / ResHeight * 1.0));
+}
+
+void WidescreenFixes::EnableHudCorrection()
+{
+	Hook((DWORD)(this->baseModuleRef) + 0x36E390, aspectCorrectionUI2DDraw, 0x9F);
+
+	//*(float*)((DWORD)baseModule + 0x83229)  = 2;//1.3962635; //CombatCameraFOV
+	//*(float*)((DWORD)baseModule + 0x29BCC8) = 100;//60; //TorchFOV (Flashlight FOV)
+	//*(float*)((DWORD)baseModule + 0x29B8CD) = 100;//50 //TorchFOV1
+	//*(float*)((DWORD)baseModule + 0x29B501) = 100;//50 //TorchFOV2
+	CorrectCrosshair();
 }

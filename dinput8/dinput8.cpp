@@ -3,6 +3,7 @@
 
 //Global Variables
 bool bSkipIntro = false;
+bool bEnableHudCorrection = false;
 int bWidth = 1024;
 int bHeight = 768;
 float bAspectRatio = 1.33333f;
@@ -88,6 +89,7 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 
 		//Load info from ini
 		bSkipIntro = GetPrivateProfileInt("MAIN", "SkipIntro", 0, path) != 0;
+		bEnableHudCorrection = GetPrivateProfileInt("MAIN", "EnableHUDCorrection", 0, path) != 0;
 		bWidth = GetPrivateProfileInt("MAIN", "Width", 0, path);
 		bHeight = GetPrivateProfileInt("MAIN", "Height", 0, path);
 		if (bWidth == 0 || bHeight == 0)
@@ -148,6 +150,8 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 		{
 			pWidescreenFixes = new WidescreenFixes(baseModule, bWidth, bHeight);
 			pWidescreenFixes->OverrideFOV(bDesiredFOV);
+			if (bEnableHudCorrection)
+				pWidescreenFixes->EnableHudCorrection();
 		}
 
 		if (bSkipIntro)
