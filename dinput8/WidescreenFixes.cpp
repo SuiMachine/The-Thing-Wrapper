@@ -28,40 +28,19 @@ void __declspec(naked) cinematicsRectangleOverride()
 	}
 }
 
-std::set<std::string> *avoidThis = new std::set<std::string>();
-std::string filesExcludedFromAspectCorrection[] = { "eff_cctvdarkband", "eff_cctvnoise", "eff_cctvstatic", "gui_cells", "gui_scrollbarkit", "gui_ringframekit", "gui_outerbar", "eff_cctvreclight",
-	"gui_mousepointer",
-	"gui_qepricaption",
-	"gui_qepriicon",
-	"gui_qeseccaption",
-	"gui_qesecicon",
-	"gui_pccontrolcombo",
-	"gui_flare",
-	"gui_machinegun",
-	"gui_adrenaline",
-	"gui_bloodtest",
-	"gui_c4",
-	"gui_compactflamer",
-	"gui_compactflamer",
-	"gui_fireextinguisher",
-	"gui_flamegrenade",
-	"gui_flamethrower",
-	"gui_flamethrowerammo",
-	"gui_flare",
-	"gui_grenadelauncher",
-	"gui_hegrenade",
-	"gui_machinegunammo",
-	"gui_medipak",
-	"gui_pistol",
-	"gui_pistolammo",
-	"gui_reggrenade",
-	"gui_shotgun",
-	"gui_shotgunammo",
-	"gui_sniperrifle",
-	"gui_sniperrifleammo",
-	"gui_stungrenade",
-	"gui_taser",
-	"gui_torch"
+std::set<std::string> *unscaledList = new std::set<std::string>();
+std::set<std::string> *scaledList = new std::set<std::string>();
+
+
+//Some images are better left stretched (usually the ones used as overlays like camera noise, so he is a list of them
+std::string filesExcludedFromAspectCorrection[] = { "eff_cctvdarkband", 
+	"eff_cctvnoise",
+	"eff_cctvstatic",
+	"gui_scrollbarkit",
+	"gui_ringframekit",
+	"gui_outerbar",
+	"eff_cctvreclight",
+	//"gui_pccontrolcombo"
 };
 
 void __fastcall aspectCorrectionUI2DDraw(float *ecx0, int *edx0, signed int a1, signed int a2, signed int a3, signed int a4, char * a5, int a6, int a7)
@@ -73,21 +52,90 @@ void __fastcall aspectCorrectionUI2DDraw(float *ecx0, int *edx0, signed int a1, 
 	float fRightEdgePrecent = 0;
 	float fTopEdgePrecent = 0;
 
+	//This is basically precent coordinates where -1, -1 is left top, 0,0 is middle 1,1 is bottom right etc.
 	fLeftEdgePrecent = (float)((double)a1 * 0.003125 - 1.0);
 	fRightEdgePrecent = (float)((double)a3 * 0.003125 - 1.0);
 	fBottomEdgePrecent = (float)((double)a2 * 0.0041666669 - 1.0);
 	fTopEdgePrecent = (float)((double)a4 * 0.0041666669 - 1.0);
-
-	if (std::find(std::begin(filesExcludedFromAspectCorrection), std::end(filesExcludedFromAspectCorrection), a5) == std::end(filesExcludedFromAspectCorrection))
+	
+	if (std::find(std::begin(filesExcludedFromAspectCorrection), std::end(filesExcludedFromAspectCorrection), a5) != std::end(filesExcludedFromAspectCorrection))
 	{
-		fLeftEdgePrecent = fLeftEdgePrecent / divChange;
-		fRightEdgePrecent = fRightEdgePrecent / divChange;
-
 #if _DEBUG
 		std::string halo = a5;
-		if (halo != "" && avoidThis->find(halo) == avoidThis->end())
+		if (halo != "" && unscaledList->find(halo) == unscaledList->end())
 		{
-			avoidThis->insert(halo);
+			unscaledList->insert(halo);
+		}
+#endif
+	}
+	else
+	{
+		//calculate vector for repositioning
+		float centerVectorX = 0.0f - fLeftEdgePrecent;
+		float centerVectorY = 0.0f - fBottomEdgePrecent;
+
+		//check if image is inverted
+		bool isInvertedXAxis = (fLeftEdgePrecent > fRightEdgePrecent);
+		bool isInvertedYAxis = (fTopEdgePrecent > fBottomEdgePrecent);
+
+		//invert on X axis
+		if (isInvertedXAxis)
+		{
+			fLeftEdgePrecent *= -1.0f;
+			fRightEdgePrecent *= -1.0f;
+		}
+
+		//invert on Y axis
+		if (isInvertedYAxis)
+		{
+			fTopEdgePrecent *= -1.0f;
+			fBottomEdgePrecent *= -1.0f;
+		}
+
+		//reposition image so that we get edges with coordinates 0,0, Width, Height
+		fLeftEdgePrecent += centerVectorX;
+		fTopEdgePrecent += centerVectorY;
+		fRightEdgePrecent += centerVectorX;
+		fBottomEdgePrecent += centerVectorY;
+
+		//Calculate half size
+		float halfSizeX = (fRightEdgePrecent - fLeftEdgePrecent) / 2;
+		float halfSizeY = (fTopEdgePrecent - fBottomEdgePrecent) / 2;
+
+		//Reposition iamge so we have it right in the middle of X,Y axis
+		fLeftEdgePrecent -= halfSizeX;
+		fTopEdgePrecent -= halfSizeY;
+		fRightEdgePrecent -= halfSizeX;
+		fBottomEdgePrecent -= halfSizeY;
+
+		//Scale left and right edges on X and Y axis
+		fLeftEdgePrecent /= divChange;
+		fRightEdgePrecent /= divChange;
+
+		//Move image back to original position
+		fLeftEdgePrecent = fLeftEdgePrecent - centerVectorX + halfSizeX;
+		fTopEdgePrecent = fTopEdgePrecent - centerVectorY + halfSizeY;
+		fRightEdgePrecent = fRightEdgePrecent - centerVectorX + halfSizeX;
+		fBottomEdgePrecent = fBottomEdgePrecent - centerVectorY + halfSizeY;
+
+		//Invert on X axis if it was inverted
+		if (isInvertedXAxis)
+		{
+			fLeftEdgePrecent *= -1.0f;
+			fRightEdgePrecent *= -1.0f;
+		}
+
+		//Invert on Y axis if it was inverted
+		if (isInvertedYAxis)
+		{
+			fTopEdgePrecent *= -1.0f;
+			fBottomEdgePrecent *= -1.0f;
+		}
+#if _DEBUG
+		std::string halo = a5;
+		if (halo != "" && scaledList->find(halo) == scaledList->end())
+		{
+			scaledList->insert(halo);
 		}
 #endif
 	}
