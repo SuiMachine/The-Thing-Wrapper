@@ -38,6 +38,9 @@
     <ClInclude Include="WidescreenFixes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sui_stringOperationsSimplification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dinput8.def">

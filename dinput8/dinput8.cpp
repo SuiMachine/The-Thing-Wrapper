@@ -107,12 +107,13 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 		}
 		vPositionX = GetPrivateProfileInt("MAIN", "PositionX", 0, path);
 		vPositionY = GetPrivateProfileInt("MAIN", "PositionY", 0, path);
+
+		char loadAdditionalDLLName[255];
+		DWORD lenghtWhateverLibary = GetPrivateProfileString("MAIN", "LoadDll", "", loadAdditionalDLLName, 254, path);
 		
 		//FOV read as string and parse
 		{
-			char strValue[255];
-			DWORD LenghtWhatever = GetPrivateProfileString("MAIN", "FOV", "60", strValue, 254, path);
-			bDesiredFOV = (float)std::atof(strValue);
+			bDesiredFOV = GetPrivateProfileFloat("MAIN", "FOV", 60.0f, path);
 			if (bDesiredFOV < 10 || bDesiredFOV > 120)
 				bDesiredFOV = 60;
 		}
@@ -163,6 +164,12 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 		//Cheats
 		pCheat->bEnableDoInGameSaveLoad = GetPrivateProfileInt("CHEATS", "EnableSaveLoadGame", 0, path) != 0;
 		pCheat->hookAllEnabled(baseModule);
+
+		//LoadLibary
+		if (SuiString_EndsWith(loadAdditionalDLLName, ".dll"))
+		{
+			LoadLibraryA(loadAdditionalDLLName);
+		}
 
 		break;
 	}
