@@ -5,9 +5,11 @@ static bool SuiString_EndsWith(std::string source, std::string endsWith)
 {
 	if (&source != NULL && &endsWith != NULL && endsWith.length() <= source.length())
 	{
-		int startPos = source.length() - endsWith.length() - 1;
+		int startPos = source.length() - endsWith.length();
 		for (unsigned int i = 0; i < endsWith.length(); i++)
 		{
+			char compL = source[startPos + i];
+			char compR = endsWith[i];
 			if (source[startPos + i] != endsWith[i])
 			{
 				return false;

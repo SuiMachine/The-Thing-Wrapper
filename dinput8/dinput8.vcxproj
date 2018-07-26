@@ -19,14 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cheats.cpp" />
     <ClCompile Include="dinput8.cpp" />
+    <ClCompile Include="RegOverride.cpp" />
     <ClCompile Include="WidescreenFixes.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cheats.h" />
     <ClInclude Include="dinput8.h" />
     <ClInclude Include="hookFunctions.h" />
+    <ClInclude Include="RegOverride.h" />
     <ClInclude Include="sui_stringOperationsSimplification.h" />
     <ClInclude Include="WidescreenFixes.h" />
   </ItemGroup>
@@ -106,6 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;DINPUT8_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>dinput8.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

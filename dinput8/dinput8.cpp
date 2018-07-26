@@ -15,7 +15,7 @@ float fTrue = 1.0f;
 float fFalse = 0.0f;
 float bDesiredFOV = 90;
 
-cheats * pCheat;
+RegOverride * regOverride;
 WidescreenFixes * pWidescreenFixes;
 HMODULE baseModule;
 
@@ -78,6 +78,9 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 	{
 	case DLL_PROCESS_ATTACH:
 	{
+		//Cheats
+		regOverride = new RegOverride();
+
 		//Get module location and its ini file
 		char path[MAX_PATH];
 		HMODULE hm = NULL;
@@ -85,7 +88,6 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 		GetModuleFileNameA(hm, path, sizeof(path));
 		*strrchr(path, '\\') = '\0';
 		strcat_s(path, "\\dinput8.ini");
-		pCheat = new cheats();
 
 		//Load info from ini
 		bSkipIntro = GetPrivateProfileInt("MAIN", "SkipIntro", 0, path) != 0;
@@ -118,6 +120,9 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 				bDesiredFOV = 60;
 		}
 
+		//RegistryOverrides
+		if (GetPrivateProfileInt("CHEATS", "EnableSaveLoadGame", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatSaveGame);
+
 		//Get dll from Windows directory
 		GetSystemDirectory(path, MAX_PATH);
 		strcat_s(path, "\\dinput8.dll");
@@ -132,6 +137,11 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 
 		//Get base module
 		baseModule = GetModuleHandle(NULL);
+		char baseModuleName[255];
+		DWORD whatever = GetModuleFileName(baseModule, baseModuleName, 255);
+		std::string cast = (std::string)baseModuleName;
+		std::transform(cast.begin(), cast.end(), cast.begin(), ::tolower);
+		bool what = SuiString_EndsWith(cast, ".exe");
 		UnprotectModule(baseModule);
 
 		//Size override detour
@@ -161,9 +171,7 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 			*(short*)((DWORD)baseModule + 0x76D9A) = 0x9090;
 		}
 
-		//Cheats
-		pCheat->bEnableDoInGameSaveLoad = GetPrivateProfileInt("CHEATS", "EnableSaveLoadGame", 0, path) != 0;
-		pCheat->hookAllEnabled(baseModule);
+		regOverride->HookRegistry();
 
 		//LoadLibary
 		if (SuiString_EndsWith(loadAdditionalDLLName, ".dll"))

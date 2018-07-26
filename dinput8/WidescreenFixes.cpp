@@ -2,13 +2,14 @@
 #define M_PI 3.14159265358979323846
 #define USE_MATH_DEFINE
 
-#pragma region StaticInjectionFunctions
 int StretchedAspectTop = 0;
 int StretchedAspectLeft= 0;
 int StretchedAspectWidth = 1024;
 int StretchedAspectHeight = 768;
 float divChange = 1;
 
+#pragma region StaticInjectionFunctions
+#pragma region CutscenesAspectCorrectionFix
 DWORD cinematicsRectangleOverrideReturn;
 void __declspec(naked) cinematicsRectangleOverride()
 {
@@ -27,11 +28,8 @@ void __declspec(naked) cinematicsRectangleOverride()
 		jmp[cinematicsRectangleOverrideReturn]
 	}
 }
-
-std::set<std::string> *unscaledList = new std::set<std::string>();
-std::set<std::string> *scaledList = new std::set<std::string>();
-
-
+#pragma endregion
+#pragma region 2dIconsScaling
 //Some images are better left stretched (usually the ones used as overlays like camera noise, so he is a list of them
 std::string filesExcludedFromAspectCorrection[] = { "eff_cctvdarkband", 
 	"eff_cctvnoise",
@@ -40,7 +38,6 @@ std::string filesExcludedFromAspectCorrection[] = { "eff_cctvdarkband",
 	"gui_ringframekit",
 	"gui_outerbar",
 	"eff_cctvreclight",
-	//"gui_pccontrolcombo"
 };
 
 void __fastcall aspectCorrectionUI2DDraw(float *ecx0, int *edx0, signed int a1, signed int a2, signed int a3, signed int a4, char * a5, int a6, int a7)
@@ -60,13 +57,6 @@ void __fastcall aspectCorrectionUI2DDraw(float *ecx0, int *edx0, signed int a1, 
 	
 	if (std::find(std::begin(filesExcludedFromAspectCorrection), std::end(filesExcludedFromAspectCorrection), a5) != std::end(filesExcludedFromAspectCorrection))
 	{
-#if _DEBUG
-		std::string halo = a5;
-		if (halo != "" && unscaledList->find(halo) == unscaledList->end())
-		{
-			unscaledList->insert(halo);
-		}
-#endif
 	}
 	else
 	{
@@ -131,18 +121,37 @@ void __fastcall aspectCorrectionUI2DDraw(float *ecx0, int *edx0, signed int a1, 
 			fTopEdgePrecent *= -1.0f;
 			fBottomEdgePrecent *= -1.0f;
 		}
-#if _DEBUG
-		std::string halo = a5;
-		if (halo != "" && scaledList->find(halo) == scaledList->end())
-		{
-			scaledList->insert(halo);
-		}
-#endif
 	}
 
 	//int __fastcall blind_Draw2DElement(float *unknownPointerPRollyStruct, int *unknownPointer, float leftEdgePrecent, float bottomEdgePrecent, float rightEdgePrecent, float topEdgePrecent, int a7, int a8, int a9)
 	typedef int(__fastcall *funcDraw2DElement)(float*, int*, float edgeLeft, float edgeBottom, float edgeRight, float edgeTop, char*, int, int);
 	((funcDraw2DElement)0x0076E480)(v9, v10, fLeftEdgePrecent, fBottomEdgePrecent, fRightEdgePrecent, fTopEdgePrecent, a5, a6, a7);
+}
+#pragma endregion
+
+float *__fastcall menuButtonsScaling(float *a1, float *a2, float *a3)
+{
+	//Matrix * Matrix?
+	float divFix = 1.3333333f;
+	a2[1] = a2[1] / 2;
+	float *result = a3;
+	*a1 = (a3[8] * a2[2] + a2[1] * a3[4] + *a2 * *a3 + a2[3] * a3[12]); //35
+	a1[1] = result[9] * a2[2] + a2[1] * result[5] + *a2 * result[1] + result[13] * a2[3];
+	a1[2] = result[10] * a2[2] + a2[1] * result[6] + result[2] * *a2 + result[14] * a2[3];
+	a1[3] = a2[3] * result[15] + a2[1] * result[7] + result[11] * a2[2] + result[3] * *a2;
+	a1[4] = a2[5] * result[4] + a2[7] * result[12] + result[8] * a2[6] + a2[4] * *result;
+	a1[5] = (result[5] * a2[5] + a2[4] * result[1] + result[13] * a2[7] + result[9] * a2[6]); //35
+	a1[6] = a2[5] * result[6] + result[14] * a2[7] + result[10] * a2[6] + a2[4] * result[2];
+	a1[7] = a2[4] * result[3] + a2[7] * result[15] + a2[6] * result[11] + a2[5] * result[7];
+	a1[8] = a2[9] * result[4] + a2[11] * result[12] + result[8] * a2[10] + a2[8] * *result;
+	a1[9] = result[5] * a2[9] + a2[8] * result[1] + result[13] * a2[11] + result[9] * a2[10];
+	a1[10] = (a2[9] * result[6] + result[14] * a2[11] + result[10] * a2[10] + a2[8] * result[2]); //35
+	a1[11] = a2[8] * result[3] + a2[11] * result[15] + a2[10] * result[11] + a2[9] * result[7];
+	a1[12] = (a2[13] * result[4] + a2[15] * result[12] + result[8] * a2[14] + a2[12] * *result); //PositionX
+	a1[13] = result[5] * a2[13] + a2[12] * result[1] + result[13] * a2[15] + result[9] * a2[14]; //PositionY
+	a1[14] = a2[13] * result[6] + result[14] * a2[15] + result[10] * a2[14] + a2[12] * result[2]; //0
+	a1[15] = a2[12] * result[3] + a2[15] * result[15] + a2[14] * result[11] + a2[13] * a3[7]; //1
+	return result;
 }
 #pragma endregion
 
@@ -202,6 +211,8 @@ float WidescreenFixes::ConvertFOV(float DesiredFOVInDegrees, float AspectRatio)
 void WidescreenFixes::EnableHudCorrection()
 {
 	Hook((DWORD)(this->baseModuleRef) + 0x36E390, aspectCorrectionUI2DDraw, 0x9F);
+	//Hook((DWORD)(this->baseModuleRef) + 0x1B7F80, menuButtonsScaling, 0x5);
+
 
 	//*(float*)((DWORD)baseModule + 0x83229)  = 2;//1.3962635; //CombatCameraFOV
 	//*(float*)((DWORD)baseModule + 0x29BCC8) = 100;//60; //TorchFOV (Flashlight FOV)

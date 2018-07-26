@@ -6,7 +6,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>  
-#include "cheats.h"
+#include <algorithm>
+
+#include "RegOverride.h"
 #include "hookFunctions.h"
 #include "WidescreenFixes.h"
 #include "sui_stringOperationsSimplification.h"
