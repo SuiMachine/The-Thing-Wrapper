@@ -1,7 +1,7 @@
 #include "RegOverride.h"
 
 bool * enabledFeatures;
-char __fastcall ReadRegistryDetour(float *PtrWhereToWrite, HKEY hKeyLocation, const char *RegistryPath, const char *RegistryProperty)
+char __fastcall ReadRegistryFloatDetour(float *PtrWhereToWrite, HKEY hKeyLocation, const char *RegistryPath, const char *RegistryProperty)
 {
 	bool testing = enabledFeatures[(int)SettingEnum::CheatSaveGame];
 	if(enabledFeatures[(int)SettingEnum::CheatSaveGame] != false && strcmp(RegistryProperty, "DoInGameLoadSave") == 0)
@@ -10,6 +10,21 @@ char __fastcall ReadRegistryDetour(float *PtrWhereToWrite, HKEY hKeyLocation, co
 		return 1;
 	}
 	else if(enabledFeatures[(int)SettingEnum::CheatDoLevelSelect] != false && strcmp(RegistryProperty, "DoLevelSelect") == 0)
+	{
+		*PtrWhereToWrite = 1.0f;
+		return 1;
+	}
+	else if (enabledFeatures[(int)SettingEnum::CheatPlayerInvulnerable] != false && strcmp(RegistryProperty, "PlayerInvulnerable") == 0)
+	{
+		*PtrWhereToWrite = 1.0f;
+		return 1;
+	}
+	else if (enabledFeatures[(int)SettingEnum::CheatNPCInvulnerable] != false && strcmp(RegistryProperty, "NPCInvulnerable") == 0)
+	{
+		*PtrWhereToWrite = 1.0f;
+		return 1;
+	}
+	else if (enabledFeatures[(int)SettingEnum::CheatFullWeaponEquip] != false && strcmp(RegistryProperty, "	FullWeaponEquip") == 0)
 	{
 		*PtrWhereToWrite = 1.0f;
 		return 1;
@@ -41,14 +56,8 @@ char __fastcall ReadRegistryDetour(float *PtrWhereToWrite, HKEY hKeyLocation, co
 	char *v6 = strchr(SubKey, 92);
 	const char *v7 = v6 + 1;
 	v20 = v6 + 1;
-	//Has to be subkey path - SOFTWARE\Computer Artworks\The Thing\1.0
-	//v4 is normal
-	//SOFTWARE\Computer Artworks\The Thing\1.0
-	//0
-	//0x20019
-	//Ptr to whatever
+
 	v8 = RegOpenKeyExA(v4, RegistryPath, 0, KEY_READ, &phkResult);
-	//v8 should be 0 for existing key
 	if (v8)
 	{
 		v9 = 0;
@@ -89,19 +98,6 @@ char __fastcall ReadRegistryDetour(float *PtrWhereToWrite, HKEY hKeyLocation, co
 		}
 		return v9;
 	}
-
-	//Debug message here
-	//1
-	//Attempting to read float
-	//Subkey - SOFTWARE\Computer Artworks\The Thing\1.0
-	//PropertyName
-
-	//phkResult that we got from RegOpenKeyExA
-	//PropertyName
-	//0
-	//Type Address
-	//Data
-	//cbData (prolly 0x40)
 
 	DWORD cbData = 64; // [esp+20h] [ebp-104Ch]
 
@@ -158,8 +154,16 @@ void RegOverride::SetSetting(SettingEnum element)
 		break;
 	case(SettingEnum::CheatDoLevelSelect):
 		enabledFeatures[(int)SettingEnum::CheatDoLevelSelect] = true;
-			break;
-
+		break;
+	case(SettingEnum::CheatFullWeaponEquip):
+		enabledFeatures[(int)SettingEnum::CheatFullWeaponEquip] = true;
+		break;
+	case(SettingEnum::CheatPlayerInvulnerable):
+		enabledFeatures[(int)SettingEnum::CheatPlayerInvulnerable] = true;
+		break;
+	case(SettingEnum::CheatNPCInvulnerable):
+		enabledFeatures[(int)SettingEnum::CheatNPCInvulnerable] = true;
+		break;
 
 	default:
 		break;
@@ -178,5 +182,5 @@ void RegOverride::HookRegistry()
 		}
 	}
 
-	Hook(0x682240, ReadRegistryDetour, 0x5);
+	Hook(0x682240, ReadRegistryFloatDetour, 0x5);
 }

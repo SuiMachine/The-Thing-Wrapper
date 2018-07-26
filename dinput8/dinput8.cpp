@@ -122,6 +122,10 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 
 		//RegistryOverrides
 		if (GetPrivateProfileInt("CHEATS", "EnableSaveLoadGame", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatSaveGame);
+		if (GetPrivateProfileInt("CHEATS", "EnableLevelSelect", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatDoLevelSelect);
+		if (GetPrivateProfileInt("CHEATS", "PlayerInvulnerable ", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatPlayerInvulnerable);
+		if (GetPrivateProfileInt("CHEATS", "TeamInvulnerable", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatNPCInvulnerable);
+		if (GetPrivateProfileInt("CHEATS", "AllWeapons", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatFullWeaponEquip);
 
 		//Get dll from Windows directory
 		GetSystemDirectory(path, MAX_PATH);

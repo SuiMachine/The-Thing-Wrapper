@@ -10,6 +10,9 @@ enum class SettingEnum
 {
 	CheatSaveGame,
 	CheatDoLevelSelect,
+	CheatPlayerInvulnerable,
+	CheatNPCInvulnerable,
+	CheatFullWeaponEquip,
 	LastEntry
 };
 
@@ -21,4 +24,3 @@ public:
 	void SetSetting(SettingEnum setting);
 	void HookRegistry();
 };
-
