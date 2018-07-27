@@ -120,12 +120,12 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 				bDesiredFOV = 60;
 		}
 
-		//RegistryOverrides
-		if (GetPrivateProfileInt("CHEATS", "EnableSaveLoadGame", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatSaveGame);
-		if (GetPrivateProfileInt("CHEATS", "EnableLevelSelect", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatDoLevelSelect);
-		if (GetPrivateProfileInt("CHEATS", "PlayerInvulnerable ", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatPlayerInvulnerable);
-		if (GetPrivateProfileInt("CHEATS", "TeamInvulnerable", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatNPCInvulnerable);
-		if (GetPrivateProfileInt("CHEATS", "AllWeapons", 0, path) != 0) regOverride->SetSetting(SettingEnum::CheatFullWeaponEquip);
+		if (GetPrivateProfileInt("MAIN", "OverrideRegistryValues", 0, path) != 0)
+		{
+			regOverride->LoadValuesFromIni(path);
+		}
+
+
 
 		//Get dll from Windows directory
 		GetSystemDirectory(path, MAX_PATH);
@@ -175,7 +175,8 @@ bool WINAPI DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 			*(short*)((DWORD)baseModule + 0x76D9A) = 0x9090;
 		}
 
-		regOverride->HookRegistry();
+		if (regOverride->isRegOverrideEnabled)
+			regOverride->HookRegistry();
 
 		//LoadLibary
 		if (SuiString_EndsWith(loadAdditionalDLLName, ".dll"))

@@ -1,7 +1,6 @@
 #pragma once
 #include "hookFunctions.h"
 #include <string>
-#include <set>
 
 class WidescreenFixes
 {

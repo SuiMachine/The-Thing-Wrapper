@@ -1,34 +1,100 @@
 #include "RegOverride.h"
 
+std::set<std::string> debugSets;
 bool * enabledFeatures;
+
+float ToBinaryFloat(int index, float overrideValue = 1.0f)
+{
+	if (enabledFeatures[index])
+		return overrideValue;
+	else
+		return 0.0f;
+}
+
 char __fastcall ReadRegistryFloatDetour(float *PtrWhereToWrite, HKEY hKeyLocation, const char *RegistryPath, const char *RegistryProperty)
 {
-	bool testing = enabledFeatures[(int)SettingEnum::CheatSaveGame];
-	if(enabledFeatures[(int)SettingEnum::CheatSaveGame] != false && strcmp(RegistryProperty, "DoInGameLoadSave") == 0)
+	if(strcmp(RegistryProperty, "DoInGameLoadSave") == 0)
 	{
-		*PtrWhereToWrite = 1.0f;
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::CheatSaveGame);
 		return 1;
 	}
-	else if(enabledFeatures[(int)SettingEnum::CheatDoLevelSelect] != false && strcmp(RegistryProperty, "DoLevelSelect") == 0)
+	else if(strcmp(RegistryProperty, "DoLevelSelect") == 0)
 	{
-		*PtrWhereToWrite = 1.0f;
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::CheatDoLevelSelect);
 		return 1;
 	}
-	else if (enabledFeatures[(int)SettingEnum::CheatPlayerInvulnerable] != false && strcmp(RegistryProperty, "PlayerInvulnerable") == 0)
+	else if (strcmp(RegistryProperty, "PlayerInvulnerable") == 0)
 	{
-		*PtrWhereToWrite = 1.0f;
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::CheatPlayerInvulnerable);
 		return 1;
 	}
-	else if (enabledFeatures[(int)SettingEnum::CheatNPCInvulnerable] != false && strcmp(RegistryProperty, "NPCInvulnerable") == 0)
+	else if (strcmp(RegistryProperty, "NPCInvulnerable") == 0)
 	{
-		*PtrWhereToWrite = 1.0f;
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::CheatNPCInvulnerable);
 		return 1;
 	}
-	else if (enabledFeatures[(int)SettingEnum::CheatFullWeaponEquip] != false && strcmp(RegistryProperty, "	FullWeaponEquip") == 0)
+	else if (strcmp(RegistryProperty, "FullWeaponEquip") == 0)
 	{
-		*PtrWhereToWrite = 1.0f;
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::CheatFullWeaponEquip);
 		return 1;
 	}
+	else if (strcmp(RegistryProperty, "FPS") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::DevShowFPS);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "ShowLights") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::DevShowLights);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "EnableAntiAliasing") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::GraphicsEnableAA);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "SmoothMouse") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::InputMouseSmoothing);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "DisableShadows") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::GraphicsDisableShadows);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "DisableSomeUI") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::GraphicsDisableShadows);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "EnableTrilinear") == 0 || strcmp(RegistryProperty, "BumpEnableTrilinear") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::GraphicsTrilinearFiltering);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "EnableAnisotropic") == 0 || strcmp(RegistryProperty, "BumpEnableAnisotropic") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::GraphicsEnableAniso);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "BumpEnable") == 0 || strcmp(RegistryProperty, "BumpEnableDynamic") == 0)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::GraphicsEnableBumpMapping);
+		return 1;
+	}
+	else if (strcmp(RegistryProperty, "Console") == 0 )
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::DevDrawConsoleMsg);
+		return 1;
+	}
+
+#if _DEBUG
+	std::string propertyCast = RegistryProperty;
+	bool contains = debugSets.find(propertyCast) != debugSets.end();
+	if (!contains)
+		debugSets.insert(propertyCast);
+#endif
 
 	//Need to clean this shit up
 
@@ -118,7 +184,7 @@ char __fastcall ReadRegistryFloatDetour(float *PtrWhereToWrite, HKEY hKeyLocatio
 			break;
 		case 4:
 			v22 = Data[0];
-			*PtrWhereToWrite = (double)Data[0];
+			*PtrWhereToWrite = (float)Data[0];
 			v9 = 1;
 			break;
 		default:
@@ -147,40 +213,38 @@ RegOverride::~RegOverride()
 
 void RegOverride::SetSetting(SettingEnum element)
 {
-	switch (element)
-	{
-	case(SettingEnum::CheatSaveGame):
-		enabledFeatures[(int)SettingEnum::CheatSaveGame] = true;
-		break;
-	case(SettingEnum::CheatDoLevelSelect):
-		enabledFeatures[(int)SettingEnum::CheatDoLevelSelect] = true;
-		break;
-	case(SettingEnum::CheatFullWeaponEquip):
-		enabledFeatures[(int)SettingEnum::CheatFullWeaponEquip] = true;
-		break;
-	case(SettingEnum::CheatPlayerInvulnerable):
-		enabledFeatures[(int)SettingEnum::CheatPlayerInvulnerable] = true;
-		break;
-	case(SettingEnum::CheatNPCInvulnerable):
-		enabledFeatures[(int)SettingEnum::CheatNPCInvulnerable] = true;
-		break;
+	enabledFeatures[(int)element] = true;
+}
 
-	default:
-		break;
-	}
+void RegOverride::LoadValuesFromIni(char * iniPath)
+{
+	isRegOverrideEnabled = true;
+
+	//Graphics
+	if (GetPrivateProfileInt("GRAPHICS", "AntiAliasing", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsEnableAA);
+	if (GetPrivateProfileInt("GRAPHICS", "TrilinearFiltering", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsTrilinearFiltering);
+	if (GetPrivateProfileInt("GRAPHICS", "DisableShadows", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsDisableShadows);
+	if (GetPrivateProfileInt("GRAPHICS", "BumpMapping", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsEnableBumpMapping);
+	if (GetPrivateProfileInt("GRAPHICS", "AnisotropicFiltering", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsEnableAniso);
+
+	//Input
+	if (GetPrivateProfileInt("INPUT", "MouseSmoothing", 0, iniPath) != 0) SetSetting(SettingEnum::InputMouseSmoothing);
+
+	//Cheats
+	if (GetPrivateProfileInt("CHEATS", "EnableSaveLoadGame", 0, iniPath) != 0) SetSetting(SettingEnum::CheatSaveGame);
+	if (GetPrivateProfileInt("CHEATS", "EnableLevelSelect", 0, iniPath) != 0) SetSetting(SettingEnum::CheatDoLevelSelect);
+	if (GetPrivateProfileInt("CHEATS", "PlayerInvulnerable ", 0, iniPath) != 0) SetSetting(SettingEnum::CheatPlayerInvulnerable);
+	if (GetPrivateProfileInt("CHEATS", "TeamInvulnerable", 0, iniPath) != 0) SetSetting(SettingEnum::CheatNPCInvulnerable);
+	if (GetPrivateProfileInt("CHEATS", "AllWeapons", 0, iniPath) != 0) SetSetting(SettingEnum::CheatFullWeaponEquip);
+
+	//Developer
+	if (GetPrivateProfileInt("DEVELOPER", "ShowFPS", 0, iniPath) != 0) SetSetting(SettingEnum::DevShowFPS);
+	if (GetPrivateProfileInt("DEVELOPER", "ShowLights", 0, iniPath) != 0) SetSetting(SettingEnum::DevShowLights);
+	if (GetPrivateProfileInt("DEVELOPER", "DrawConsoleMsg", 0, iniPath) != 0) SetSetting(SettingEnum::DevDrawConsoleMsg);
+
 }
 
 void RegOverride::HookRegistry()
 {
-	bool isHookRequired = false;
-	for (int i = 0; i < (int)SettingEnum::LastEntry; i++)
-	{
-		if (enabledFeatures[i] != false)
-		{
-			isHookRequired = true;
-			break;
-		}
-	}
-
 	Hook(0x682240, ReadRegistryFloatDetour, 0x5);
 }
