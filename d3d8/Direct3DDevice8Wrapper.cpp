@@ -366,7 +366,7 @@ HRESULT Direct3DDevice8Wrapper::SetTextureStageState(DWORD Stage, D3DTEXTURESTAG
 			throw std::runtime_error("Anisotropic filtering amount has to be lower than 16!");
 		HRESULT ret = Direct3DDevice8->SetTextureStageState(Stage, D3DTSS_MINFILTER, D3DTEXF_ANISOTROPIC);
 		ret = Direct3DDevice8->SetTextureStageState(Stage, D3DTSS_MAGFILTER, D3DTEXF_ANISOTROPIC);
-		ret = Direct3DDevice8->SetTextureStageState(Stage, D3DTSS_MAXANISOTROPY, 16);
+		ret = Direct3DDevice8->SetTextureStageState(Stage, D3DTSS_MAXANISOTROPY, AnisotropicSamples);
 	}
 
     return Direct3DDevice8->SetTextureStageState(Stage, Type, Value);
