@@ -211,12 +211,5 @@ float WidescreenFixes::ConvertFOV(float DesiredFOVInDegrees, float AspectRatio)
 void WidescreenFixes::EnableHudCorrection()
 {
 	Hook((DWORD)(this->baseModuleRef) + 0x36E390, aspectCorrectionUI2DDraw, 0x9F);
-	//Hook((DWORD)(this->baseModuleRef) + 0x1B7F80, menuButtonsScaling, 0x5);
-
-
-	//*(float*)((DWORD)baseModule + 0x83229)  = 2;//1.3962635; //CombatCameraFOV
-	//*(float*)((DWORD)baseModule + 0x29BCC8) = 100;//60; //TorchFOV (Flashlight FOV)
-	//*(float*)((DWORD)baseModule + 0x29B8CD) = 100;//50 //TorchFOV1
-	//*(float*)((DWORD)baseModule + 0x29B501) = 100;//50 //TorchFOV2
 	CorrectCrosshair();
 }

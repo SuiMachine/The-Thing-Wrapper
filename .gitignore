@@ -31,6 +31,11 @@
 
 # Visual Studio trash
 .vs/
+d3d8/log
+d3d8/obj
+TheThing-Hacks/d3d8_RELEASE
+TheThing-Hacks/Build
+TheThing-Hacks/Debug
 
 # Debug build
 Debug/

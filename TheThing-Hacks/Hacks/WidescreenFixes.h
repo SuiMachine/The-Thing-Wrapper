@@ -1,5 +1,5 @@
 #pragma once
-#include "hookFunctions.h"
+#include "../hookFunctions.h"
 #include <string>
 
 class WidescreenFixes
@@ -12,7 +12,6 @@ public:
 	~WidescreenFixes();
 private:
 	void CorrectCameraAspectRatio(float aspect);
-	void TestingStuff();
 	void CorrectCrosshair();
 
 	int Width = 1024;

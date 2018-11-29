@@ -3,12 +3,12 @@
 std::set<std::string> debugSets;
 bool * enabledFeatures;
 
-float ToBinaryFloat(int index, float overrideValue = 1.0f)
+float ToBinaryFloat(int index, float overrideValue = 1.0f, float falseValue = 0)
 {
 	if (enabledFeatures[index])
 		return overrideValue;
 	else
-		return 0.0f;
+		return falseValue;
 }
 
 char __fastcall ReadRegistryFloatDetour(float *PtrWhereToWrite, HKEY hKeyLocation, const char *RegistryPath, const char *RegistryProperty)
@@ -88,6 +88,15 @@ char __fastcall ReadRegistryFloatDetour(float *PtrWhereToWrite, HKEY hKeyLocatio
 		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::DevDrawConsoleMsg);
 		return 1;
 	}
+	/*
+	else if (strcmp(RegistryProperty, "CombatCameraDistance") == 0 || strcmp(RegistryProperty, "ChaseCameraMinDistance") == 0 || strcmp(RegistryProperty, "ChaseCameraMaxDistance") == 0 ||
+		strcmp(RegistryProperty, "ChaseOutsideMaxDistance") == 0 ||
+		strcmp(RegistryProperty, "ChaseOutsideMinDistance") == 0
+		)
+	{
+		*PtrWhereToWrite = ToBinaryFloat((int)SettingEnum::DevDrawConsoleMsg, 0);
+		return 1;
+	}*/
 
 #if _DEBUG
 	std::string propertyCast = RegistryProperty;
@@ -216,7 +225,7 @@ void RegOverride::SetSetting(SettingEnum element)
 	enabledFeatures[(int)element] = true;
 }
 
-void RegOverride::LoadValuesFromIni(char * iniPath)
+void RegOverride::LoadValuesFromIni(const char * iniPath)
 {
 	isRegOverrideEnabled = true;
 
@@ -241,10 +250,13 @@ void RegOverride::LoadValuesFromIni(char * iniPath)
 	if (GetPrivateProfileInt("DEVELOPER", "ShowFPS", 0, iniPath) != 0) SetSetting(SettingEnum::DevShowFPS);
 	if (GetPrivateProfileInt("DEVELOPER", "ShowLights", 0, iniPath) != 0) SetSetting(SettingEnum::DevShowLights);
 	if (GetPrivateProfileInt("DEVELOPER", "DrawConsoleMsg", 0, iniPath) != 0) SetSetting(SettingEnum::DevDrawConsoleMsg);
-
 }
 
 void RegOverride::HookRegistry()
 {
 	Hook(0x682240, ReadRegistryFloatDetour, 0x5);
+
+	//Hook(0x48D770, cameraPosDetour, 0x5);
 }
+
+

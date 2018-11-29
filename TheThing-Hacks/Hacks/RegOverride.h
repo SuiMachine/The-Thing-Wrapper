@@ -1,5 +1,5 @@
 #pragma once
-#include "hookFunctions.h"
+#include "../hookFunctions.h"
 #include <string>
 #include <iostream>
 #include <functional>
@@ -33,6 +33,6 @@ public:
 	RegOverride();
 	~RegOverride();
 	void SetSetting(SettingEnum setting);
-	void LoadValuesFromIni(char * iniPath);
+	void LoadValuesFromIni(const char * iniPath);
 	void HookRegistry();
 };

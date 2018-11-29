@@ -1,4 +1,5 @@
 #pragma once
+#include <Windows.h>
 #include <string>
 
 static bool SuiString_EndsWith(std::string source, std::string endsWith)
@@ -21,7 +22,7 @@ static bool SuiString_EndsWith(std::string source, std::string endsWith)
 		return false;
 }
 
-static float GetPrivateProfileFloat(char* lpAppName, char* lpKeyName, float defaultValue, char* lpFileName)
+static float GetPrivateProfileFloat(const char* lpAppName, const char* lpKeyName, float defaultValue, const char* lpFileName)
 {
 	char strValue[255];
 	char floatAsCharArray[64];

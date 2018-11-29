@@ -7,11 +7,9 @@
 #include <cstring>
 #include <cmath>  
 #include <algorithm>
+#include <TheThing_RootHack.h>
 
-#include "RegOverride.h"
-#include "hookFunctions.h"
-#include "WidescreenFixes.h"
-#include "sui_stringOperationsSimplification.h"
+
 #define INITGUID
 #define DIRECTINPUT_VERSION 0x0800
 
