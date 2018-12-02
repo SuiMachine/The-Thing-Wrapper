@@ -143,6 +143,10 @@ HRESULT Direct3DDevice8Wrapper::SetClipStatus(CONST D3DCLIPSTATUS8 *pClipStatus)
 }
 
 HRESULT Direct3DDevice8Wrapper::SetRenderState(D3DRENDERSTATETYPE State, DWORD Value) {
+	/*
+	HRESULT ret = Direct3DDevice8->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
+	ret = Direct3DDevice8->SetRenderState(D3DRS_SPECULARMATERIALSOURCE, D3DMCS_MATERIAL);*/
+
     return Direct3DDevice8->SetRenderState(State, Value);
 }
 
@@ -223,10 +227,27 @@ HRESULT Direct3DDevice8Wrapper::LightEnable(DWORD LightIndex, BOOL bEnable) {
 }
 
 HRESULT Direct3DDevice8Wrapper::SetLight(DWORD Index, CONST D3DLIGHT8 *pLight) {
+#if false
+	D3DLIGHT8 * cast = (D3DLIGHT8*)pLight;
+
+
+	cast->Attenuation0 = 0.3;
+#endif
+
     return Direct3DDevice8->SetLight(Index, pLight);
 }
 
 HRESULT Direct3DDevice8Wrapper::SetMaterial(CONST D3DMATERIAL8 *pMaterial) {
+
+	D3DMATERIAL8 * mtrl = (D3DMATERIAL8*)pMaterial;
+#if FALSE
+	mtrl->Specular.r = 0.5f;
+	mtrl->Specular.g = 0.5f;
+	mtrl->Specular.b = 0.5f;
+	mtrl->Specular.a = 0.3f;
+	mtrl->Power = 20;
+#endif
+
     return Direct3DDevice8->SetMaterial(pMaterial);
 }
 

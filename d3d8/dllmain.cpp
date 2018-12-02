@@ -13,6 +13,7 @@ bool bDirect3D8DisableMaximizedWindowedModeShim;
 bool bFPSLimit;
 float fFPSLimit;
 int MaxAnisotropy = 0;
+int VsyncInterval = 0;
 
 struct d3d8_dll
 {
@@ -117,23 +118,41 @@ void ForceWindowed(D3DPRESENT_PARAMETERS *pPresentationParameters)
     SetWindowPos(pPresentationParameters->hDeviceWindow, HWND_NOTOPMOST, left, top, pPresentationParameters->BackBufferWidth, pPresentationParameters->BackBufferHeight, SWP_SHOWWINDOW);
 }
 
+void ForceVsync(D3DPRESENT_PARAMETERS *pPresentationParameters)
+{
+	pPresentationParameters->FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	switch (VsyncInterval)
+	{
+	case 1:
+		pPresentationParameters->FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+		break;
+	case 2:
+		pPresentationParameters->FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_TWO;
+		break;
+	case 3:
+		pPresentationParameters->FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_THREE;
+		break;
+	case 4:
+		pPresentationParameters->FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_FOUR;
+		break;
+	default:
+		pPresentationParameters->FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+		break;
+	}
+}
+
 HRESULT Direct3D8Wrapper::CreateDevice(UINT Adapter, D3DDEVTYPE DeviceType, HWND hFocusWindow, DWORD BehaviorFlags, D3DPRESENT_PARAMETERS *pPresentationParameters, IDirect3DDevice8 **ppReturnedDeviceInterface) {
     IDirect3DDevice8* Direct3DDevice8;
 
     if (bForceWindowedMode)
         ForceWindowed(pPresentationParameters);
 
+	if (VsyncInterval > 0)
+		ForceVsync(pPresentationParameters);
+
     HRESULT Result = Direct3D8->CreateDevice(Adapter, DeviceType, hFocusWindow, BehaviorFlags, pPresentationParameters, &Direct3DDevice8);
 
-#if false
-	D3DCAPS8 * caps = new D3DCAPS8();
-	Direct3DDevice8->GetDeviceCaps(caps);
-	caps->TextureAddressCaps |= (D3DPTFILTERCAPS_MAGFANISOTROPIC | D3DPTFILTERCAPS_MINFANISOTROPIC);
-	caps->RasterCaps |= D3DPRASTERCAPS_ANISOTROPY;
-	caps->MaxAnisotropy = 16;
-#endif
-
-	*ppReturnedDeviceInterface = new Direct3DDevice8Wrapper(&Direct3DDevice8, pPresentationParameters, MaxAnisotropy);
+	*ppReturnedDeviceInterface = new Direct3DDevice8Wrapper(&Direct3DDevice8, pPresentationParameters, MaxAnisotropy );
 
 
     return Result;
@@ -184,7 +203,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         fFPSLimit = static_cast<float>(GetPrivateProfileInt("D3D8", "FPSLimit", 0, path));
         if (fFPSLimit)
             bFPSLimit = true;
-
+		
         if (bDirect3D8DisableMaximizedWindowedModeShim)
         {
             auto addr = (uintptr_t)GetProcAddress(d3d8.dll, "Direct3D8EnableMaximizedWindowedModeShim");
@@ -199,6 +218,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             }
         }
 
+		if (GetPrivateProfileInt("MAIN", "Windowed", 0, path) == 0)
+		{
+			VsyncInterval = GetPrivateProfileInt("D3D8", "VsyncInterval", 0, path);
+		}
 		MaxAnisotropy = GetPrivateProfileInt("D3D8", "AnisotropicFiltering", 0, path);
 
 
