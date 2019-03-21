@@ -74,15 +74,18 @@
     <OutDir>D:\Computer Artworks\The Thing\bin\</OutDir>
     <IntDir>obj\Win32\Debug\</IntDir>
     <TargetName>d3d8</TargetName>
+    <IncludePath>../externals;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='d3d8_RELEASE|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IntDir>obj\Win32\Release\</IntDir>
     <TargetName>d3d8</TargetName>
     <OutDir>$(SolutionDir)\Release</OutDir>
+    <IncludePath>../externals;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>../externals;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -93,6 +96,7 @@
       <PreprocessorDefinitions>rsc_CompanyName="ThirteenAG";rsc_LegalCopyright="MIT License";rsc_FileVersion="1.0.0.0";rsc_ProductVersion="1.0.0.0";rsc_InternalName="d3d8-wrapper";rsc_ProductName="d3d8-wrapper";rsc_OriginalFilename="d3d8.dll";rsc_FileDescription="https://thirteenag.github.io/wfp";rsc_UpdateUrl="https://github.com/ThirteenAG/d3d8-wrapper";_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>../TheThing-Hacks;dxsdk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,6 +119,7 @@
       <AdditionalIncludeDirectories>../TheThing-Hacks;dxsdk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -137,6 +142,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;D3D8_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../TheThing-Hacks;dxsdk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

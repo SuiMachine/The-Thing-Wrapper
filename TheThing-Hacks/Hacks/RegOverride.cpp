@@ -1,4 +1,5 @@
 #include "RegOverride.h"
+#include <intrin.h>
 
 std::set<std::string> debugSets;
 bool * enabledFeatures;
@@ -225,31 +226,31 @@ void RegOverride::SetSetting(SettingEnum element)
 	enabledFeatures[(int)element] = true;
 }
 
-void RegOverride::LoadValuesFromIni(const char * iniPath)
+void RegOverride::LoadValuesFromIni(CIniReader iniReader)
 {
 	isRegOverrideEnabled = true;
 
 	//Graphics
-	if (GetPrivateProfileInt("GRAPHICS", "AntiAliasing", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsEnableAA);
-	if (GetPrivateProfileInt("GRAPHICS", "TrilinearFiltering", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsTrilinearFiltering);
-	if (GetPrivateProfileInt("GRAPHICS", "DisableShadows", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsDisableShadows);
-	if (GetPrivateProfileInt("GRAPHICS", "BumpMapping", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsEnableBumpMapping);
-	if (GetPrivateProfileInt("GRAPHICS", "AnisotropicFiltering", 0, iniPath) != 0) SetSetting(SettingEnum::GraphicsEnableAniso);
+	if (iniReader.ReadInteger("GRAPHICS", "AntiAliasing", 0) != 0) SetSetting(SettingEnum::GraphicsEnableAA);
+	if (iniReader.ReadInteger("GRAPHICS", "TrilinearFiltering", 0) != 0) SetSetting(SettingEnum::GraphicsTrilinearFiltering);
+	if (iniReader.ReadInteger("GRAPHICS", "DisableShadows", 0) != 0) SetSetting(SettingEnum::GraphicsDisableShadows);
+	if (iniReader.ReadInteger("GRAPHICS", "BumpMapping", 0) != 0) SetSetting(SettingEnum::GraphicsEnableBumpMapping);
+	if (iniReader.ReadInteger("GRAPHICS", "AnisotropicFiltering", 0) != 0) SetSetting(SettingEnum::GraphicsEnableAniso);
 
 	//Input
-	if (GetPrivateProfileInt("INPUT", "MouseSmoothing", 0, iniPath) != 0) SetSetting(SettingEnum::InputMouseSmoothing);
+	if (iniReader.ReadInteger("INPUT", "MouseSmoothing", 0) != 0) SetSetting(SettingEnum::InputMouseSmoothing);
 
 	//Cheats
-	if (GetPrivateProfileInt("CHEATS", "EnableSaveLoadGame", 0, iniPath) != 0) SetSetting(SettingEnum::CheatSaveGame);
-	if (GetPrivateProfileInt("CHEATS", "EnableLevelSelect", 0, iniPath) != 0) SetSetting(SettingEnum::CheatDoLevelSelect);
-	if (GetPrivateProfileInt("CHEATS", "PlayerInvulnerable ", 0, iniPath) != 0) SetSetting(SettingEnum::CheatPlayerInvulnerable);
-	if (GetPrivateProfileInt("CHEATS", "TeamInvulnerable", 0, iniPath) != 0) SetSetting(SettingEnum::CheatNPCInvulnerable);
-	if (GetPrivateProfileInt("CHEATS", "AllWeapons", 0, iniPath) != 0) SetSetting(SettingEnum::CheatFullWeaponEquip);
+	if (iniReader.ReadInteger("CHEATS", "EnableSaveLoadGame", 0) != 0) SetSetting(SettingEnum::CheatSaveGame);
+	if (iniReader.ReadInteger("CHEATS", "EnableLevelSelect", 0) != 0) SetSetting(SettingEnum::CheatDoLevelSelect);
+	if (iniReader.ReadInteger("CHEATS", "PlayerInvulnerable ", 0) != 0) SetSetting(SettingEnum::CheatPlayerInvulnerable);
+	if (iniReader.ReadInteger("CHEATS", "TeamInvulnerable", 0) != 0) SetSetting(SettingEnum::CheatNPCInvulnerable);
+	if (iniReader.ReadInteger("CHEATS", "AllWeapons", 0) != 0) SetSetting(SettingEnum::CheatFullWeaponEquip);
 
 	//Developer
-	if (GetPrivateProfileInt("DEVELOPER", "ShowFPS", 0, iniPath) != 0) SetSetting(SettingEnum::DevShowFPS);
-	if (GetPrivateProfileInt("DEVELOPER", "ShowLights", 0, iniPath) != 0) SetSetting(SettingEnum::DevShowLights);
-	if (GetPrivateProfileInt("DEVELOPER", "DrawConsoleMsg", 0, iniPath) != 0) SetSetting(SettingEnum::DevDrawConsoleMsg);
+	if (iniReader.ReadInteger("DEVELOPER", "ShowFPS", 0) != 0) SetSetting(SettingEnum::DevShowFPS);
+	if (iniReader.ReadInteger("DEVELOPER", "ShowLights", 0) != 0) SetSetting(SettingEnum::DevShowLights);
+	if (iniReader.ReadInteger("DEVELOPER", "DrawConsoleMsg", 0) != 0) SetSetting(SettingEnum::DevDrawConsoleMsg);
 }
 
 void RegOverride::HookRegistry()

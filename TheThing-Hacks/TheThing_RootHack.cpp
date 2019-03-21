@@ -1,5 +1,6 @@
 #include "TheThing_RootHack.h"
 
+
 //Global Variables
 bool bSkipIntro = false;
 bool bEnableHudCorrection = false;
@@ -88,17 +89,19 @@ TheThings_RootHack::TheThings_RootHack(std::string DllName)
 	//Cheats
 	regOverride = new RegOverride();
 
+	CIniReader configReader(path);
+
 	//Load info from ini
-	bSkipIntro = GetPrivateProfileInt("MAIN", "SkipIntro", 0, path) != 0;
+	bSkipIntro = configReader.ReadInteger("MAIN", "SkipIntro", 0) != 0;
 	if (bSkipIntro)
 	{
 		//This actually makes the game jump to language selector, but it's incomplete, so it skips the intros instead - well in English release at least
 		*(short*)((DWORD)baseModule + 0x76D9A) = (short)0x9090;
 	}
 
-	bEnableHudCorrection = GetPrivateProfileInt("MAIN", "EnableHUDCorrection", 0, path) != 0;
-	bWidth = GetPrivateProfileInt("MAIN", "Width", 0, path);
-	bHeight = GetPrivateProfileInt("MAIN", "Height", 0, path);
+	bEnableHudCorrection = configReader.ReadInteger("MAIN", "EnableHUDCorrection", 0) != 0;
+	bWidth = configReader.ReadInteger("MAIN", "Width", 0);
+	bHeight = configReader.ReadInteger("MAIN", "Height", 0);
 	if (bWidth == 0 || bHeight == 0)
 	{
 		bWidth = 1024;
@@ -106,14 +109,14 @@ TheThings_RootHack::TheThings_RootHack(std::string DllName)
 	}
 	bAspectRatio = bWidth * 1.0f / bHeight;
 
-	bFullscreen = GetPrivateProfileInt("MAIN", "Windowed", 0, path) == 0;
-	bBorderless = GetPrivateProfileInt("MAIN", "Windowed", 0, path) > 1;
+	bFullscreen = configReader.ReadInteger("MAIN", "Windowed", 0) == 0;
+	bBorderless = configReader.ReadInteger("MAIN", "Windowed", 0) > 1;
 	if (bBorderless)
 	{
 		dwStyleOverride = WS_VISIBLE | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	}
-	vPositionX = GetPrivateProfileInt("MAIN", "PositionX", 0, path);
-	vPositionY = GetPrivateProfileInt("MAIN", "PositionY", 0, path);
+	vPositionX = configReader.ReadInteger("MAIN", "PositionX", 0);
+	vPositionY = configReader.ReadInteger("MAIN", "PositionY", 0);
 
 	//Size override detour
 	Hook((DWORD)baseModule + 0xB1AA, sizeOverride, &sizeOverrideReturn, 0x6);
@@ -130,7 +133,7 @@ TheThings_RootHack::TheThings_RootHack(std::string DllName)
 
 	//FOV read as string and parse
 	{
-		bDesiredFOV = GetPrivateProfileFloat("MAIN", "FOV", 60.0f, path);
+		bDesiredFOV = configReader.ReadFloat("MAIN", "FOV", 60.0f);
 		if (bDesiredFOV < 10 || bDesiredFOV > 120)
 			bDesiredFOV = 60;
 	}
@@ -143,9 +146,9 @@ TheThings_RootHack::TheThings_RootHack(std::string DllName)
 			pWidescreenFixes->EnableHudCorrection();
 	}
 
-	if (GetPrivateProfileInt("MAIN", "OverrideRegistryValues", 0, path) != 0)
+	if (configReader.ReadInteger("MAIN", "OverrideRegistryValues", 0) != 0)
 	{
-		regOverride->LoadValuesFromIni(path);
+		regOverride->LoadValuesFromIni(configReader);
 	}
 
 	if (regOverride->isRegOverrideEnabled)
@@ -155,13 +158,12 @@ TheThings_RootHack::TheThings_RootHack(std::string DllName)
 	FirstPersonHack * fph = new FirstPersonHack(baseModule);
 #endif
 
-	char loadAdditionalDLLName[255];
-	DWORD lenghtWhateverLibary = GetPrivateProfileString("MAIN", "LoadDll", "", loadAdditionalDLLName, 254, path);
+	std::string loadAdditionalDLLName = configReader.ReadString("MAIN", "LoadDll", "");
 
 	//LoadLibary
 	if (SuiString_EndsWith(loadAdditionalDLLName, ".dll"))
 	{
-		LoadLibraryA(loadAdditionalDLLName);
+		LoadLibraryA(loadAdditionalDLLName.c_str());
 	}
 }
 

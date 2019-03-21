@@ -14,6 +14,7 @@
 #include "Hacks\WidescreenFixes.h"
 #include "Hacks\RegOverride.h"
 #include "Hacks\FirstPersonHack.h"
+#include "inireader\IniReader.h"
 
 
 class TheThings_RootHack

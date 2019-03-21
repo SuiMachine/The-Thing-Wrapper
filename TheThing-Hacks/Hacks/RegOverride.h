@@ -4,6 +4,7 @@
 #include <iostream>
 #include <functional>
 #include <set>
+#include "inireader/IniReader.h"
 
 
 
@@ -33,6 +34,6 @@ public:
 	RegOverride();
 	~RegOverride();
 	void SetSetting(SettingEnum setting);
-	void LoadValuesFromIni(const char * iniPath);
+	void LoadValuesFromIni(CIniReader iniReader);
 	void HookRegistry();
 };
