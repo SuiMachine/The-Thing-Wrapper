@@ -20,7 +20,7 @@ Wrapper for The Thing (video game) to make it easy to run the game in Windowed m
 
 # Installation
 1. Download *either*:
-⋅⋅*``d3d8.dll`` and ``d3d8.ini``
+  *``d3d8.dll`` and ``d3d8.ini``
 or
-⋅⋅*``dinput8.dll`` and ``dinput8.ini``
+  *``dinput8.dll`` and ``dinput8.ini``
 2. Move both dll and ini to a folder where ``TheThing.exe`` is located.

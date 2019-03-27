@@ -5,7 +5,7 @@ Use one **OR** the other. Do **NOT** use both at the same time. The scope of cha
 As for installation it boils down to:
 
 1. Download *either*:
-⋅⋅*``d3d8.dll`` and ``d3d8.ini``
+  *``d3d8.dll`` and ``d3d8.ini``
 or
-⋅⋅*``dinput8.dll`` and ``dinput8.ini``
+  *``dinput8.dll`` and ``dinput8.ini``
 2. Move both dll and ini to a folder where ``TheThing.exe`` is located.
