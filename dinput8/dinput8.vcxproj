@@ -40,7 +40,7 @@
     <ProjectGuid>{53FB14D2-A363-4842-A53C-B573138A76E3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>dinput8</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -120,6 +120,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>../externals;../TheThing-Hacks;$(IncludePath)</IncludePath>
     <LibraryPath>../TheThing-Hacks/Build/Release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\Release\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='d3d8_RELEASE|Win32'">
     <LinkIncremental>false</LinkIncremental>

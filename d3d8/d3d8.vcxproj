@@ -80,7 +80,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IntDir>obj\Win32\Release\</IntDir>
     <TargetName>d3d8</TargetName>
-    <OutDir>$(SolutionDir)\Release</OutDir>
+    <OutDir>$(SolutionDir)\Release\$(ProjectName)\</OutDir>
     <IncludePath>../externals;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
